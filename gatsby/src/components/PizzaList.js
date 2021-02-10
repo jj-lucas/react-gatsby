@@ -2,6 +2,7 @@ import { Link } from 'gatsby'
 import React from 'react'
 import Img from 'gatsby-image'
 import styled from 'styled-components'
+import ToppingsFilter from './ToppingsFilter'
 
 const PizzaGridStyles = styled.div`
 	display: grid;
@@ -39,10 +40,13 @@ const SinglePizza = ({ pizza }) => (
 
 export default function PizzaList({ pizzas }) {
 	return (
-		<PizzaGridStyles>
-			{pizzas.map(pizza => (
-				<SinglePizza key={pizza.id} pizza={pizza} />
-			))}
-		</PizzaGridStyles>
+		<>
+			<ToppingsFilter />
+			<PizzaGridStyles>
+				{pizzas.map(pizza => (
+					<SinglePizza key={pizza.id} pizza={pizza} />
+				))}
+			</PizzaGridStyles>
+		</>
 	)
 }
