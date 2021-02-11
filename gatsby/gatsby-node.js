@@ -31,9 +31,40 @@ async function turnPizzasIntoPages({ graphql, actions }) {
 	})
 }
 
+async function turnProductsIntoPages({ graphql, actions }) {
+	// get a template for this page
+	const productTemplate = path.resolve('./src/templates/Product.js')
+
+	// query all pizzas
+	const { data } = await graphql(`
+		query {
+			kuraitis {
+				products {
+					id
+					name_da
+					code
+				}
+			}
+		}
+	`)
+	console.log(data)
+	// loop over and create a page
+	data.kuraitis.products.forEach(product => {
+		console.log(`Creating a page for ${product.name_da}`)
+		actions.createPage({
+			path: `product/${product.code}`,
+			component: productTemplate,
+			context: {
+				code: product.code,
+			},
+		})
+	})
+}
+
 export async function createPages(params) {
 	// create pizzas
 	await turnPizzasIntoPages(params)
 	// create toppings
 	// create slicemasters
+	await turnProductsIntoPages(params)
 }
