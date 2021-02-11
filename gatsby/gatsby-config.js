@@ -13,6 +13,17 @@ export default {
 	},
 	plugins: [
 		{
+			resolve: 'gatsby-source-graphql',
+			options: {
+				// Arbitrary name for the remote schema Query type
+				typeName: 'Kuraitis',
+				// Field under which the remote schema will be accessible. You'll use this in your Gatsby query
+				fieldName: 'kuraitis',
+				// Url to query from
+				url: 'http://localhost:4444/graphql',
+			},
+		},
+		{
 			resolve: 'gatsby-source-sanity',
 			options: {
 				projectId: '3b9p4imn',
