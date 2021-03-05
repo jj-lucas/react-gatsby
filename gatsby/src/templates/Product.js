@@ -10,7 +10,7 @@ export default function SinglePizzaPage({ data }) {
 		</>
 	)
 }
-
+/*
 export const query = graphql`
 	query($code: String!) {
 		kuraitis {
@@ -22,3 +22,4 @@ export const query = graphql`
 		}
 	}
 `
+*/

@@ -17,7 +17,6 @@ async function turnPizzasIntoPages({ graphql, actions }) {
 			}
 		}
 	`)
-	console.log(data)
 	// loop over and create a page
 	data.pizzas.nodes.forEach(pizza => {
 		console.log(`Creating a page for ${pizza.name}`)
@@ -31,6 +30,37 @@ async function turnPizzasIntoPages({ graphql, actions }) {
 	})
 }
 
+async function turnToppingsIntoPages({ graphql, actions }) {
+	// get a template
+	const toppingsTemplate = path.resolve('./src/pages/pizzas.js')
+	// query all of the toppings
+	const { data } = await graphql(`
+		query {
+			toppings: allSanityTopping {
+				nodes {
+					name
+					id
+				}
+			}
+		}
+	`)
+	// create a page for that topping
+	data.toppings.nodes.forEach(topping => {
+		console.log(`Creating a page for ${topping.name}`)
+
+		actions.createPage({
+			path: `topping/${topping.name}`,
+			component: toppingsTemplate,
+			context: {
+				topping: topping.name,
+				toppingRegex: `/${topping.name}/i`,
+			},
+		})
+	})
+	// pass topping data to pizza.js
+}
+
+/*
 async function turnProductsIntoPages({ graphql, actions }) {
 	// get a template for this page
 	const productTemplate = path.resolve('./src/templates/Product.js')
@@ -60,11 +90,14 @@ async function turnProductsIntoPages({ graphql, actions }) {
 		})
 	})
 }
+*/
 
 export async function createPages(params) {
-	// create pizzas
-	await turnPizzasIntoPages(params)
-	// create toppings
+	// wait for all promises to be resolved before finishing this fucntion
+	await Promise.all([
+		turnPizzasIntoPages(params),
+		turnToppingsIntoPages(params),
+	])
 	// create slicemasters
-	await turnProductsIntoPages(params)
+	// await turnProductsIntoPages(params)
 }

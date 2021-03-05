@@ -12,7 +12,7 @@ export default {
 		description: 'The best pizza in Hamilton',
 	},
 	plugins: [
-		{
+		/* {
 			resolve: 'gatsby-source-graphql',
 			options: {
 				// Arbitrary name for the remote schema Query type
@@ -22,7 +22,7 @@ export default {
 				// Url to query from
 				url: 'http://localhost:4444/graphql',
 			},
-		},
+		}, */
 		{
 			resolve: 'gatsby-source-sanity',
 			options: {

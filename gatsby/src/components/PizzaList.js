@@ -38,10 +38,10 @@ const SinglePizza = ({ pizza }) => (
 	</PizzaStyles>
 )
 
-export default function PizzaList({ pizzas }) {
+export default function PizzaList({ pizzas, activeTopping }) {
 	return (
 		<>
-			<ToppingsFilter />
+			<ToppingsFilter activeTopping={activeTopping} />
 			<PizzaGridStyles>
 				{pizzas.map(pizza => (
 					<SinglePizza key={pizza.id} pizza={pizza} />
