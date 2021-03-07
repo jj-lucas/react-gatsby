@@ -88,7 +88,7 @@ async function turnSlicemastersIntoPages({ graphql, actions }) {
 			// this data is passed to the template when we create it
 			context: {
 				skip: i * pageSize,
-				currentPage: i,
+				currentPage: i + 1,
 				pageSize,
 			},
 		})
@@ -135,7 +135,6 @@ async function fetchBeersAndTurnIntoNodes({
 	// fetch a list of beers
 	const res = await fetch('https://api.sampleapis.com/beers/ale')
 	const beers = await res.json()
-	console.log(beers)
 
 	// loop over each one
 	for (const beer of beers) {
