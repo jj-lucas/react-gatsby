@@ -59,6 +59,42 @@ async function turnToppingsIntoPages({ graphql, actions }) {
 	// pass topping data to pizza.js
 }
 
+async function turnSlicemastersIntoPages({ graphql, actions }) {
+	// query all slicemasters
+	const { data } = await graphql(`
+		query {
+			slicemasters: allSanityPerson {
+				totalCount
+				nodes {
+					name
+					id
+					slug {
+						current
+					}
+				}
+			}
+		}
+	`)
+	// turn each slicemaster into their own page
+	// figure out how many pages there are based
+	const pageSize = parseInt(process.env.GATSBY_PAGE_SIZE)
+	const pageCount = Math.ceil(data.slicemasters.totalCount / pageSize)
+
+	// loop from 1 to n and create slicemasters page
+	Array.from({ length: pageCount }).forEach((_, i) => {
+		actions.createPage({
+			path: `/slicemasters/${i + 1}`,
+			component: path.resolve('./src/pages/slicemasters.js'),
+			// this data is passed to the template when we create it
+			context: {
+				skip: i * pageSize,
+				currentPage: i,
+				pageSize,
+			},
+		})
+	})
+}
+
 /*
 async function turnProductsIntoPages({ graphql, actions }) {
 	// get a template for this page
@@ -133,6 +169,7 @@ export async function createPages(params) {
 	await Promise.all([
 		turnPizzasIntoPages(params),
 		turnToppingsIntoPages(params),
+		turnSlicemastersIntoPages(params),
 	])
 	// create slicemasters
 	// await turnProductsIntoPages(params)
