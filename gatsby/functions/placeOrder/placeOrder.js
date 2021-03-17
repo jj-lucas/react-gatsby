@@ -33,6 +33,12 @@ const transporter = nodemailer.createTransport({
 	},
 })
 
+function wait(ms = 0) {
+	return new Promise((resolve, reject) => {
+		setTimeout(resolve, ms)
+	})
+}
+
 exports.handler = async (event, context) => {
 	const body = JSON.parse(event.body)
 	console.log(body)
@@ -48,6 +54,16 @@ exports.handler = async (event, context) => {
 					message: `Oops! You are missing the ${field} field`,
 				}),
 			}
+		}
+	}
+
+	// make sure they actually have items in that order
+	if (!body.order.length) {
+		return {
+			statusCode: 400,
+			body: JSON.stringify({
+				message: `Why would you order nothing?!`,
+			}),
 		}
 	}
 
