@@ -1,20 +1,24 @@
-import { useContext, useState } from 'react'
+import { useState, useContext } from 'react'
 import OrderContext from '../components/OrderContext'
-import attachNamesAndPrices from './attachNamesAndPrices'
 import calculateOrderTotal from './calculateOrderTotal'
 import formatMoney from './formatMoney'
+import attachNamesAndPrices from './attachNamesAndPrices'
 
 export default function usePizza({ pizzas, values }) {
+	// 1. Create some state to hold our order
+	// We got rid of this line because we moved useState up to the provider
+	// const [order, setOrder] = useState([]);
+	// Now we access both our state and our updater function (setOrder) via context
 	const [order, setOrder] = useContext(OrderContext)
 	const [error, setError] = useState()
 	const [loading, setLoading] = useState(false)
 	const [message, setMessage] = useState('')
 
-	// make function to add things to order
+	// 2. Make a function add things to order
 	function addToOrder(orderedPizza) {
 		setOrder([...order, orderedPizza])
 	}
-	// make function to remove things from order
+	// 3. Make a function remove things from order
 	function removeFromOrder(index) {
 		setOrder([
 			// everything before the item we want to remove
@@ -23,41 +27,43 @@ export default function usePizza({ pizzas, values }) {
 			...order.slice(index + 1),
 		])
 	}
+
+	// this is the function that is run when someone submits the form
 	async function submitOrder(e) {
 		e.preventDefault()
 		console.log(e)
 		setLoading(true)
 		setError(null)
-		setMessage(null)
+		setMessage('Go eat!')
 
-		// gather data to be sent
+		// gather all the data
 		const body = {
 			order: attachNamesAndPrices(order, pizzas),
 			total: formatMoney(calculateOrderTotal(order, pizzas)),
 			name: values.name,
 			email: values.email,
 		}
-		// send this order to serverless function when they check out
-		const res = fetch(`${process.env.GATSBY_SERVERLESS_BASE}/placeOrder`, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify(body),
-		})
-
+		// 4. Send this data the a serevrless function when they check out
+		const res = await fetch(
+			`${process.env.GATSBY_SERVERLESS_BASE}/placeOrder`,
+			{
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(body),
+			}
+		)
 		const text = JSON.parse(await res.text())
-
-		console.log(text)
 
 		// check if everything worked
 		if (res.status >= 400 && res.status < 600) {
-			setLoading(false)
+			setLoading(false) // turn off loading
 			setError(text.message)
 		} else {
-			// it worked
+			// it worked!
 			setLoading(false)
-			setMessage('Success, come on down for your pizza!')
+			setMessage('Success! Come on down for your pizza')
 		}
 	}
 
